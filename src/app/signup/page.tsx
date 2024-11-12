@@ -1,9 +1,12 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { SetStateAction, useState, ChangeEvent, FormEvent } from "react";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify functions and container
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 type Payload = {
+  firstName: string,
+  lastName: string,
   email: string;
   password: string;
   contactNo: string;
@@ -17,6 +20,8 @@ const SignUpPage = () => {
   const [volunteerType, setVolunteerType] = useState<string>(""); 
   const [organisationType, setOrganisationType] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [contactNumber, setContactNumber] = useState<string>("");
   const [orgName, setOrgName] = useState<string>("");
@@ -50,6 +55,8 @@ const SignUpPage = () => {
     ],
   };
 
+  const router = useRouter();
+
   const handleVolunteerTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setVolunteerType(event.target.value);
     setOrganisationType(""); // Reset org type when volunteer type changes
@@ -59,6 +66,8 @@ const SignUpPage = () => {
     e.preventDefault();
 
     const payload: Payload = {
+      firstName,
+      lastName,
       email,
       password,
       contactNo: contactNumber,
@@ -80,6 +89,7 @@ const SignUpPage = () => {
         },
         body: JSON.stringify(payload),
       });
+      console.log(response)
 
       if (!response.ok) {
         // Attempt to parse the response as JSON to get a more detailed error
@@ -88,10 +98,10 @@ const SignUpPage = () => {
       }
 
       toast.success("Sign Up successful!"); // Success toast
+      router.push('/login');
+
     } catch (err: any) {
-      const errorMessage = err.message || "An error occurred during signup.";
-      console.log(err)
-      toast.error(`Sign Up failed: ${errorMessage}`); // Show actual error message from backend
+      toast.error("An error occurred during signup."); // Show actual error message from backend
     } finally {
       setIsLoading(false);
     }
@@ -127,6 +137,40 @@ const SignUpPage = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
+          {/* First Name field */}
+          <div className="mb-4">
+            <label htmlFor="firstName" className="block text-sm font-medium text-black mb-2">
+              First Name
+            </label>
+            <input
+              type="firstName"
+              id="firstName"
+              name="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Enter your First Name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md text-black bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              required
+            />
+          </div>
+
+          {/* Email field */}
+          <div className="mb-4">
+            <label htmlFor="lastName" className="block text-sm font-medium text-black mb-2">
+              Last Name
+            </label>
+            <input
+              type="lastName"
+              id="lastName"
+              name="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Enter your Last Name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md text-black bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              required
+            />
+          </div>
+
           {/* Email field */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-black mb-2">
